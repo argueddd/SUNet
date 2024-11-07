@@ -24,7 +24,7 @@ PS = args.ps
 NUM_PATCHES = args.num_patches
 NUM_CORES = args.num_cores
 
-noisy_patchDir = os.path.join(tar, 'input')
+noisy_patchDir = os.path.join(tar, 'input_div')
 clean_patchDir = os.path.join(tar, 'target')
 
 if os.path.exists(tar):

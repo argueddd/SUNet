@@ -61,7 +61,7 @@ class WindowAttention(nn.Module):
     It supports both of shifted and non-shifted window.
 
     Args:
-        dim (int): Number of input channels.
+        dim (int): Number of input_div channels.
         window_size (tuple[int]): The height and width of the window.
         num_heads (int): Number of attention heads.
         qkv_bias (bool, optional):  If True, add a learnable bias to query, key, value. Default: True
@@ -107,7 +107,7 @@ class WindowAttention(nn.Module):
     def forward(self, x, mask=None):
         """
         Args:
-            x: input features with shape of (num_windows*B, N, C)
+            x: input_div features with shape of (num_windows*B, N, C)
             mask: (0/-inf) mask with shape of (num_windows, Wh*Ww, Wh*Ww) or None
         """
         B_, N, C = x.shape
@@ -158,7 +158,7 @@ class SwinTransformerBlock(nn.Module):
     r""" Swin Transformer Block.
 
     Args:
-        dim (int): Number of input channels.
+        dim (int): Number of input_div channels.
         input_resolution (tuple[int]): Input resulotion.
         num_heads (int): Number of attention heads.
         window_size (int): Window size.
@@ -184,7 +184,7 @@ class SwinTransformerBlock(nn.Module):
         self.shift_size = shift_size
         self.mlp_ratio = mlp_ratio
         if min(self.input_resolution) <= self.window_size:
-            # if window size is larger than input resolution, we don't partition windows
+            # if window size is larger than input_div resolution, we don't partition windows
             self.shift_size = 0
             self.window_size = min(self.input_resolution)
         assert 0 <= self.shift_size < self.window_size, "shift_size must in 0-window_size"
@@ -227,7 +227,7 @@ class SwinTransformerBlock(nn.Module):
     def forward(self, x):
         H, W = self.input_resolution
         B, L, C = x.shape
-        # assert L == H * W, "input feature has wrong size"
+        # assert L == H * W, "input_div feature has wrong size"
 
         shortcut = x
         x = self.norm1(x)
@@ -286,8 +286,8 @@ class PatchMerging(nn.Module):
     r""" Patch Merging Layer.
 
     Args:
-        input_resolution (tuple[int]): Resolution of input feature.
-        dim (int): Number of input channels.
+        input_resolution (tuple[int]): Resolution of input_div feature.
+        dim (int): Number of input_div channels.
         norm_layer (nn.Module, optional): Normalization layer.  Default: nn.LayerNorm
     """
 
@@ -304,7 +304,7 @@ class PatchMerging(nn.Module):
         """
         H, W = self.input_resolution
         B, L, C = x.shape
-        assert L == H * W, "input feature has wrong size"
+        assert L == H * W, "input_div feature has wrong size"
         assert H % 2 == 0 and W % 2 == 0, f"x size ({H}*{W}) are not even."
 
         x = x.view(B, H, W, C)
@@ -390,7 +390,7 @@ class BasicLayer(nn.Module):
     """ A basic Swin Transformer layer for one stage.
 
     Args:
-        dim (int): Number of input channels.
+        dim (int): Number of input_div channels.
         input_resolution (tuple[int]): Input resolution.
         depth (int): Number of blocks.
         num_heads (int): Number of attention heads.
@@ -460,7 +460,7 @@ class BasicLayer_up(nn.Module):
     """ A basic Swin Transformer layer for one stage.
 
     Args:
-        dim (int): Number of input channels.
+        dim (int): Number of input_div channels.
         input_resolution (tuple[int]): Input resolution.
         depth (int): Number of blocks.
         num_heads (int): Number of attention heads.
@@ -521,7 +521,7 @@ class PatchEmbed(nn.Module):
     Args:
         img_size (int): Image size.  Default: 224.
         patch_size (int): Patch token size. Default: 4.
-        in_chans (int): Number of input image channels. Default: 3.
+        in_chans (int): Number of input_div image channels. Default: 3.
         embed_dim (int): Number of linear projection output channels. Default: 96.
         norm_layer (nn.Module, optional): Normalization layer. Default: None
     """
@@ -571,7 +571,7 @@ class SUNet(nn.Module):
     Args:
         img_size (int | tuple(int)): Input image size. Default 224
         patch_size (int | tuple(int)): Patch size. Default: 4
-        in_chans (int): Number of input image channels. Default: 3
+        in_chans (int): Number of input_div image channels. Default: 3
 
         embed_dim (int): Patch embedding dimension. Default: 96
         depths (tuple(int)): Depth of each Swin Transformer layer.
@@ -736,7 +736,7 @@ class SUNet(nn.Module):
     def up_x4(self, x):
         H, W = self.patches_resolution
         B, L, C = x.shape
-        assert L == H * W, "input features has wrong size"
+        assert L == H * W, "input_div features has wrong size"
 
         if self.final_upsample == "Dual up-sample":
             x = self.up(x)
@@ -778,7 +778,7 @@ if __name__ == '__main__':
                   norm_layer=nn.LayerNorm, ape=False, patch_norm=True,
                   use_checkpoint=False, final_upsample="Dual up-sample")  # .cuda()
     # print(model)
-    print('input image size: (%d, %d)' % (height, width))
+    print('input_div image size: (%d, %d)' % (height, width))
     print('FLOPs: %.4f G' % (model.flops() / 1e9))
     print('model parameters: ', network_parameters(model))
     # x = model(x)
