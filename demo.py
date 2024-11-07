@@ -2,12 +2,14 @@ import torch
 import torchvision.transforms.functional as TF
 from PIL import Image
 import os
-from skimage import img_as_ubyte
 from collections import OrderedDict
 from natsort import natsorted
 from glob import glob
 import cv2
 import argparse
+
+from skimage.util import img_as_ubyte
+
 from model.SUNet import SUNet_model
 import yaml
 

@@ -1,19 +1,19 @@
+import argparse
+import math
+import os
+from collections import OrderedDict
+from glob import glob
+
+import cv2
 import torch
 import torch.nn.functional as F
 import torchvision.transforms.functional as TF
-from PIL import Image
-import os
-import utils
-from skimage import img_as_ubyte
-from collections import OrderedDict
-from natsort import natsorted
-from glob import glob
-import cv2
-import argparse
-from model.SUNet import SUNet_model
-import math
-from tqdm import tqdm
 import yaml
+from PIL import Image
+from natsort import natsorted
+from skimage.util import img_as_ubyte
+
+from model.SUNet import SUNet_model
 
 with open('training.yaml', 'r') as config:
     opt = yaml.safe_load(config)
